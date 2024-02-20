@@ -5,6 +5,7 @@ import cn.hutool.core.collection.CollectionUtil;
 import cn.hutool.core.convert.Convert;
 import cn.hutool.core.io.FileTypeUtil;
 import cn.hutool.core.io.FileUtil;
+import cn.hutool.core.lang.Assert;
 import cn.hutool.core.map.MapUtil;
 import cn.hutool.core.text.StrBuilder;
 import cn.hutool.core.util.ArrayUtil;
@@ -146,10 +147,8 @@ public class PudgeUtil {
      * @return 值
      */
     public static String buildKey(Object... keys) {
-        if (ArrayUtil.isNotEmpty(keys)) {
-            return StrUtil.join(StrUtil.COLON, keys);
-        }
-        return null;
+        Assert.notEmpty(keys);
+        return StrUtil.join(StrUtil.COLON, keys);
     }
 
     /**

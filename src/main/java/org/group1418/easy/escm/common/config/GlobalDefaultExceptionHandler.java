@@ -1,5 +1,6 @@
 package org.group1418.easy.escm.common.config;
 
+import cn.dev33.satoken.exception.SaTokenException;
 import cn.hutool.core.collection.CollectionUtil;
 import cn.hutool.core.text.StrBuilder;
 import cn.hutool.core.util.ReUtil;
@@ -170,10 +171,17 @@ public class GlobalDefaultExceptionHandler {
      */
     @ExceptionHandler(NoHandlerFoundException.class)
     public R<String> noHandlerFoundExceptionHandle(NoHandlerFoundException e) {
-        log.info("[{}] not found", currentRequestUrl());
+        log.info("[{}] not found [{}]", currentRequestUrl(),e.getRequestURL());
         return R.fail(CustomTipEnum.NOT_FOUND);
     }
 
+    /**
+     * SA-token异常
+     */
+    @ExceptionHandler(SaTokenException.class)
+    public R<String> customExceptionHandler(SaTokenException e) {
+        return R.fail(e.getCode(),e.getMessage());
+    }
 
     /**
      * 自定义异常回调

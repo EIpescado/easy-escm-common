@@ -26,7 +26,7 @@ public class BaseEntity implements Serializable {
     private Long id;
 
     /**
-     * 启用,禁用
+     * 逻辑删除标识
      */
     @TableLogic
     @TableField(fill = FieldFill.INSERT)
@@ -36,13 +36,13 @@ public class BaseEntity implements Serializable {
      * 创建时间
      */
     @TableField(fill = FieldFill.INSERT)
-    private LocalDateTime dateCreated;
+    private LocalDateTime createTime;
 
     /**
      * 最后修改时间
      */
     @TableField(fill = FieldFill.INSERT_UPDATE)
-    private LocalDateTime lastUpdated;
+    private LocalDateTime updateTime;
 
     @Version
     private Integer version;
@@ -51,21 +51,21 @@ public class BaseEntity implements Serializable {
      * 创建用户ID
      */
     @TableField(fill = FieldFill.INSERT)
-    private Long creatorId;
+    private Long createUserId;
     /**
      * 创建用户
      */
     @TableField(fill = FieldFill.INSERT)
-    private String creator;
+    private String createUser;
 
     /**
      * 最后修改用户ID
      */
     @TableField(fill = FieldFill.INSERT_UPDATE)
-    private Long modifierId;
+    private Long updateUserId;
     /**
      * 最后修改用户
      */
     @TableField(fill = FieldFill.INSERT_UPDATE)
-    private Long modifier;
+    private String updateUser;
 }

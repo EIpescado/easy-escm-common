@@ -91,6 +91,10 @@ public class R<T> implements Serializable {
         return new R<>(tip.getCode(), tip.getMsg());
     }
 
+    public static <T> R<T> fail(Integer code,String msg) {
+        return new R<>(code != null ? code.toString() : CustomTipEnum.FAIL.getCode(), msg);
+    }
+
     public static R<String> formatFail(String format, Object... args) {
         return new R<>(CustomTipEnum.FAIL.getCode(), StrFormatter.format(format, args));
     }

@@ -553,6 +553,17 @@ public class CustomRedisCacheService {
     }
 
     /**
+     * 设置key过期时间
+     *
+     * @param redisKey 缓存key
+     * @param ttl  过期时间
+     * @param unit 时间单位
+     */
+    public void expire(String redisKey, long ttl, TimeUnit unit) {
+        redisTemplate.expire(redisKey, ttl, unit);
+    }
+
+    /**
      * 从list获取数据,从右边移除一个元素
      *
      * @param redisKey list key
@@ -890,6 +901,10 @@ public class CustomRedisCacheService {
         String redisKey = PudgeUtil.buildKey(name, key);
         List<String> keys = CollUtil.newArrayList(redisKey);
         return executeLua(INCREMENT_AND_TTL_LUA, Long.class, keys, ttlSeconds, step);
+    }
+
+    public RedisTemplate<String, Object> template() {
+        return redisTemplate;
     }
 
     /**
