@@ -9,6 +9,7 @@ import lombok.extern.slf4j.Slf4j;
 import org.apache.catalina.connector.ClientAbortException;
 import org.group1418.easy.escm.common.enums.CustomTipEnum;
 import org.group1418.easy.escm.common.exception.CustomException;
+import org.group1418.easy.escm.common.saToken.SaTokenConfig;
 import org.group1418.easy.escm.common.utils.PudgeUtil;
 import org.group1418.easy.escm.common.wrapper.R;
 import org.springframework.core.NestedRuntimeException;
@@ -171,7 +172,7 @@ public class GlobalDefaultExceptionHandler {
      */
     @ExceptionHandler(NoHandlerFoundException.class)
     public R<String> noHandlerFoundExceptionHandle(NoHandlerFoundException e) {
-        log.info("[{}] not found [{}]", currentRequestUrl(),e.getRequestURL());
+        log.info("[{}] not found [{}]", currentRequestUrl(), e.getRequestURL());
         return R.fail(CustomTipEnum.NOT_FOUND);
     }
 
@@ -179,8 +180,8 @@ public class GlobalDefaultExceptionHandler {
      * SA-token异常
      */
     @ExceptionHandler(SaTokenException.class)
-    public R<String> customExceptionHandler(SaTokenException e) {
-        return R.fail(e.getCode(),e.getMessage());
+    public R<String> saTokenExceptionHandler(SaTokenException e) {
+        return SaTokenConfig.saTokenExceptionHandler(e);
     }
 
     /**

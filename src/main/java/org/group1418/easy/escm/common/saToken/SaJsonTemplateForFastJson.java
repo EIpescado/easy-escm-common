@@ -11,7 +11,7 @@ import java.util.Map;
 
 /**
  * @author yq 2024/2/20 17:59
- * @description SaJsonTemplateForFastJson
+ * @description SaJsonTemplateForFastJson 覆盖默认注入的SaJsonTemplateForJackson
  */
 @Component
 @Primary

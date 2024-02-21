@@ -243,5 +243,10 @@ public class CustomConfigProperties {
          * API 签名配置对象
          */
         public SaSignConfig sign = new SaSignConfig();
+
+        /**
+         * 不需要校验登录的路径
+         */
+        private List<String> notCheckLoginPaths;
     }
 }
