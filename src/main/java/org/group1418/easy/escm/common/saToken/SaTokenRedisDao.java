@@ -1,4 +1,4 @@
-package org.group1418.easy.escm.common.service;
+package org.group1418.easy.escm.common.saToken;
 
 import cn.dev33.satoken.dao.SaTokenDao;
 import cn.dev33.satoken.util.SaFoxUtil;
@@ -6,7 +6,8 @@ import cn.hutool.core.collection.CollUtil;
 import cn.hutool.core.collection.ListUtil;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
-import org.springframework.stereotype.Service;
+import org.group1418.easy.escm.common.service.CustomRedisCacheService;
+import org.springframework.stereotype.Component;
 
 import java.util.List;
 import java.util.Set;
@@ -16,10 +17,10 @@ import java.util.concurrent.TimeUnit;
  * @author yq 2024/2/20 10:49
  * @description SaTokenDaoRedis sa-token redis实现
  */
-@Service
+@Component
 @Slf4j
 @RequiredArgsConstructor
-public class SaTokenRedisService implements SaTokenDao {
+public class SaTokenRedisDao implements SaTokenDao {
 
     private final CustomRedisCacheService customRedisCacheService;
 

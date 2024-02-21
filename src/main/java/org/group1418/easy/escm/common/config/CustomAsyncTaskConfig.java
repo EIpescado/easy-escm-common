@@ -1,6 +1,6 @@
 package org.group1418.easy.escm.common.config;
 
-import cn.hutool.core.map.MapUtil;
+import cn.hutool.core.collection.CollUtil;
 import cn.hutool.core.util.StrUtil;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -9,11 +9,11 @@ import org.group1418.easy.escm.common.exception.CustomException;
 import org.group1418.easy.escm.common.spring.SpringContextHolder;
 import org.springframework.aop.interceptor.AsyncUncaughtExceptionHandler;
 import org.springframework.beans.factory.InitializingBean;
-import org.springframework.beans.factory.annotation.Value;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnClass;
 import org.springframework.boot.autoconfigure.task.TaskExecutionAutoConfiguration;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
+import org.springframework.context.annotation.Primary;
 import org.springframework.scheduling.annotation.AsyncAnnotationBeanPostProcessor;
 import org.springframework.scheduling.annotation.AsyncConfigurer;
 import org.springframework.scheduling.annotation.EnableAsync;
@@ -34,9 +34,8 @@ import java.util.concurrent.ThreadPoolExecutor;
 @RequiredArgsConstructor
 public class CustomAsyncTaskConfig implements AsyncConfigurer, InitializingBean {
 
-    @Value("${spring.application.name: easy-escm}")
-    private String applicationName;
     private final CustomConfigProperties configProperties;
+    public static final String TASK_EXECUTOR_SUFFIX = "-TaskExecutor";
 
 
     @Override
@@ -58,9 +57,12 @@ public class CustomAsyncTaskConfig implements AsyncConfigurer, InitializingBean 
      * 默认TaskExecutor,覆盖boot自动注入的默认
      */
     @Bean(name = {TaskExecutionAutoConfiguration.APPLICATION_TASK_EXECUTOR_BEAN_NAME, AsyncAnnotationBeanPostProcessor.DEFAULT_TASK_EXECUTOR_BEAN_NAME})
+    @Primary
     public ThreadPoolTaskExecutor applicationTaskExecutor() {
         CustomConfigProperties.AsyncConfig asyncExecutorConfigEntry = new CustomConfigProperties.AsyncConfig();
-        return this.createExecutor(applicationName + "-TaskExecutor", asyncExecutorConfigEntry);
+        String taskExecutor = configProperties.getName() + TASK_EXECUTOR_SUFFIX;
+        log.info("注入[{}]", taskExecutor);
+        return this.createExecutor(taskExecutor, asyncExecutorConfigEntry);
     }
 
 
@@ -94,10 +96,12 @@ public class CustomAsyncTaskConfig implements AsyncConfigurer, InitializingBean 
 
     @Override
     public void afterPropertiesSet() throws Exception {
-        if (configProperties != null && MapUtil.isNotEmpty(configProperties.getAsyncConfigs())) {
-            configProperties.getAsyncConfigs().forEach((k, v) -> {
-                log.info("待注入 [{}] TaskExecutor", k);
-                SpringContextHolder.putWaitImportBeans(k, this.createExecutor(k, v));
+        if (configProperties != null && CollUtil.isNotEmpty(configProperties.getAsyncConfigs())) {
+            configProperties.getAsyncConfigs().forEach(c -> {
+                String threadTaskExecutor = c.getThreadName() + TASK_EXECUTOR_SUFFIX;
+                if (StrUtil.isNotBlank(threadTaskExecutor)) {
+                    SpringContextHolder.putWaitImportBeans(threadTaskExecutor, this.createExecutor(threadTaskExecutor, c));
+                }
             });
         }
     }
