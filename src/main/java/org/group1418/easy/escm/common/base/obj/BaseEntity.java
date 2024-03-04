@@ -68,4 +68,9 @@ public class BaseEntity implements Serializable {
      */
     @TableField(fill = FieldFill.INSERT_UPDATE)
     private String updateUser;
+
+    /**
+     * 租户ID
+     */
+    private Long tenantId;
 }

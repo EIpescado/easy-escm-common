@@ -17,32 +17,23 @@ public class BaseQo implements Serializable {
     private static final long serialVersionUID = -5414534189079839739L;
 
     /**
-     * 用户ID
-     */
-    private Long currentUserId;
-
-    /**
      * 关键字搜索,用于全局搜索
      */
     private String keyword;
 
     /**
-     * 所属客户ID
+     * 当前用户ID
      */
-    private Long currentCustomerId;
+    private Long currentUid;
 
     /**
-     * 登录组织
+     * 用户所属租户ID
      */
-    private String currentOrganization;
+    private Long tenantId;
 
     /**
-     * 是否主账号
+     * 当前登录组织(公司旗下多个子公司,区分当前操作组织)
      */
-    private Boolean master;
+    private String currentOrg;
 
-    /**
-     * 导出字段
-     */
-    private List<String> exportCols;
 }

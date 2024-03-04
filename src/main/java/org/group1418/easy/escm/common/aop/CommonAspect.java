@@ -61,7 +61,7 @@ public class CommonAspect {
 
     private Object around(ProceedingJoinPoint pjp) throws Throwable {
         BasePageQo qo = (BasePageQo) pjp.getArgs()[0];
-        if (qo != null && qo.getCurrentUserId() == null) {
+        if (qo != null && qo.getCurrentUid() == null) {
             try {
 //                CustomUserDetails customUserDetails = CustomUserDetails.currentDetails();
 //                qo.setCurrentUserId(customUserDetails.getUserId());
