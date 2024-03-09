@@ -1,10 +1,5 @@
 package org.group1418.easy.escm.common.base.obj;
 
-import com.baomidou.mybatisplus.annotation.FieldFill;
-import com.baomidou.mybatisplus.annotation.TableField;
-import com.baomidou.mybatisplus.annotation.TableId;
-import com.baomidou.mybatisplus.annotation.TableLogic;
-import com.baomidou.mybatisplus.annotation.Version;
 import lombok.Data;
 import lombok.EqualsAndHashCode;
 
@@ -14,59 +9,52 @@ import java.time.LocalDateTime;
 /**
  * @author yq
  * @date 2021年4月14日 10:42:01
- * @description 基础Entity
+ * @description base to 列表对象
  * @since V1.0.0
  */
 @Data
 @EqualsAndHashCode(callSuper = false)
-public class BaseEntity implements Serializable {
+public class BaseTo implements Serializable {
 
     private static final long serialVersionUID = 6526236438185395534L;
-    @TableId
-    private Long id;
-
     /**
-     * 逻辑删除标识
+     * ID
      */
-    @TableLogic
-    @TableField(fill = FieldFill.INSERT)
-    private Boolean enabled;
+    private Long id;
 
     /**
      * 创建时间
      */
-    @TableField(fill = FieldFill.INSERT)
     private LocalDateTime createTime;
-
     /**
-     * 最后修改时间
+     * 更新时间
      */
-    @TableField(fill = FieldFill.INSERT_UPDATE)
     private LocalDateTime updateTime;
-
-    @Version
+    /**
+     * 版本
+     */
     private Integer version;
 
     /**
      * 创建用户ID
      */
-    @TableField(fill = FieldFill.INSERT)
     private Long createUserId;
     /**
      * 创建用户
      */
-    @TableField(fill = FieldFill.INSERT)
     private String createUser;
 
     /**
      * 最后修改用户ID
      */
-    @TableField(fill = FieldFill.INSERT_UPDATE)
     private Long updateUserId;
     /**
      * 最后修改用户
      */
-    @TableField(fill = FieldFill.INSERT_UPDATE)
     private String updateUser;
 
+    /**
+     * 租户ID
+     */
+    private Long tenantId;
 }
