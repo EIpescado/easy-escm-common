@@ -5,7 +5,6 @@ import cn.hutool.core.collection.CollectionUtil;
 import cn.hutool.core.convert.Convert;
 import cn.hutool.core.io.FileTypeUtil;
 import cn.hutool.core.io.FileUtil;
-import cn.hutool.core.lang.Assert;
 import cn.hutool.core.map.MapUtil;
 import cn.hutool.core.text.StrBuilder;
 import cn.hutool.core.util.ArrayUtil;
@@ -95,9 +94,10 @@ public class PudgeUtil {
 
     /**
      * 响应json
+     *
      * @param response 响应json
-     * @param r r
-     * @param <T> 返回结果类型
+     * @param r        r
+     * @param <T>      返回结果类型
      * @throws IOException
      */
     public static <T> void responseJson(HttpServletResponse response, R<T> r) throws IOException {
@@ -140,16 +140,6 @@ public class PudgeUtil {
         return SHA256_DIGESTER.digestHex(plainText);
     }
 
-    /**
-     * 生成redisKey
-     *
-     * @param keys 建
-     * @return 值
-     */
-    public static String buildKey(Object... keys) {
-        Assert.notEmpty(keys);
-        return StrUtil.join(StrUtil.COLON, keys);
-    }
 
     /**
      * 取文件内容的前28个字节.判定文件类型
@@ -207,7 +197,8 @@ public class PudgeUtil {
         if (CollUtil.isNotEmpty(map)) {
             String result = template;
             for (Map.Entry<String, String> entry : map.entrySet()) {
-                result = StrUtil.replace(result, StrBuilder.create(StrUtil.DELIM_START, entry.getKey(), StrUtil.DELIM_END).toString(), StrUtil.nullToEmpty(entry.getValue()));
+                result = StrUtil.replace(result, StrBuilder.create(StrUtil.DELIM_START, entry.getKey(), StrUtil.DELIM_END).toString(),
+                        StrUtil.nullToEmpty(entry.getValue()));
             }
             return result;
         }

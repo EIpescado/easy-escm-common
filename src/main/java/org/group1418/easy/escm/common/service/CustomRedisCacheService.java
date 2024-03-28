@@ -2,6 +2,7 @@ package org.group1418.easy.escm.common.service;
 
 import cn.hutool.core.collection.CollUtil;
 import cn.hutool.core.collection.CollectionUtil;
+import cn.hutool.core.lang.Assert;
 import cn.hutool.core.lang.func.Func0;
 import cn.hutool.core.lang.func.VoidFunc0;
 import cn.hutool.core.text.StrBuilder;
@@ -11,7 +12,6 @@ import cn.hutool.core.util.StrUtil;
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import org.group1418.easy.escm.common.serializer.CustomGenericFastJsonRedisSerializer;
-import org.group1418.easy.escm.common.utils.PudgeUtil;
 import org.redisson.RedissonMultiLock;
 import org.redisson.api.RLock;
 import org.redisson.api.RedissonClient;
@@ -74,6 +74,17 @@ public class CustomRedisCacheService {
     }
 
     /**
+     * 生成redisKey
+     *
+     * @param keys 建
+     * @return 值
+     */
+    public static String buildKey(Object... keys) {
+        Assert.notEmpty(keys);
+        return StrUtil.join(StrUtil.COLON, keys);
+    }
+
+    /**
      * 设置缓存
      *
      * @param redisKey   缓存key
@@ -129,7 +140,7 @@ public class CustomRedisCacheService {
      * @return 是否设置成功
      */
     public <T> boolean setNx(String name, String key, long ttl, TimeUnit timeUnit, RealDataGetter<T> getter) {
-        String redisKey = PudgeUtil.buildKey(name, key);
+        String redisKey = buildKey(name, key);
         if (StrUtil.isEmpty(redisKey)) {
             return false;
         }
@@ -147,7 +158,7 @@ public class CustomRedisCacheService {
      * @return 需要的数据
      */
     public <T> T set(String name, String key, RealDataGetter<T> getter, String lockKey) {
-        String redisKey = PudgeUtil.buildKey(name, key);
+        String redisKey = buildKey(name, key);
         long ttlSeconds = getCacheExpireSeconds(name);
         return set(redisKey, ttlSeconds, getter, lockKey);
     }
@@ -163,7 +174,7 @@ public class CustomRedisCacheService {
      * @return 需要的数据
      */
     public <T> T set(String name, String key, long ttlSeconds, RealDataGetter<T> getter, String lockKey) {
-        String redisKey = PudgeUtil.buildKey(name, key);
+        String redisKey = buildKey(name, key);
         return set(redisKey, ttlSeconds, getter, lockKey);
     }
 
@@ -175,7 +186,7 @@ public class CustomRedisCacheService {
      * @return 缓存
      */
     public <T> T get(String name, String key) {
-        String redisKey = PudgeUtil.buildKey(name, key);
+        String redisKey = buildKey(name, key);
         return get(redisKey);
     }
 
@@ -209,7 +220,7 @@ public class CustomRedisCacheService {
      * @return 成功失败
      */
     public Long del(String name, String key) {
-        String redisKey = PudgeUtil.buildKey(name, key);
+        String redisKey = buildKey(name, key);
         return del(redisKey);
     }
 
@@ -223,7 +234,7 @@ public class CustomRedisCacheService {
         redisTemplate.execute(new SessionCallback<List<Object>>() {
             @Override
             public List<Object> execute(RedisOperations redisOperations) throws DataAccessException {
-                String keyPattern = PudgeUtil.buildKey(name, "*");
+                String keyPattern = buildKey(name, "*");
                 // 开启事务使得后续操作 原子性
                 redisOperations.multi();
                 Set<String> keys = redisTemplate.keys(keyPattern);
@@ -346,7 +357,7 @@ public class CustomRedisCacheService {
      * @return 处理后的缓存数据
      */
     public <T> T getAndDel(String name, String key, CacheHandler<T> handler) {
-        String redisKey = PudgeUtil.buildKey(name, key);
+        String redisKey = buildKey(name, key);
         return getAndDel(redisKey, handler);
     }
 
@@ -418,7 +429,7 @@ public class CustomRedisCacheService {
      * @return boolean 是否存在
      */
     public boolean exists(String name, String key) {
-        String redisKey = PudgeUtil.buildKey(name, key);
+        String redisKey = buildKey(name, key);
         return exists(redisKey);
     }
 
@@ -441,7 +452,7 @@ public class CustomRedisCacheService {
      * @return 过期时间 单位s redis 2.8之后 若key不存在则返回 -2
      */
     public Long ttl(String name, String key) {
-        String redisKey = PudgeUtil.buildKey(name, key);
+        String redisKey = buildKey(name, key);
         return redisTemplate.getExpire(redisKey);
     }
 
@@ -548,7 +559,7 @@ public class CustomRedisCacheService {
      * @param unit 时间单位
      */
     public void expire(String name, String key, long ttl, TimeUnit unit) {
-        String redisKey = PudgeUtil.buildKey(name, key);
+        String redisKey = buildKey(name, key);
         redisTemplate.expire(redisKey, ttl, unit);
     }
 
@@ -706,7 +717,7 @@ public class CustomRedisCacheService {
      */
     public void mulLockProcess(String lockKeyPrefix, Collection<String> lockKeys, VoidFunc0 haveLockFun, VoidFunc0 doNotHaveLockFun) {
         RedissonMultiLock lock = new RedissonMultiLock(lockKeys.stream()
-                .map(key -> redissonClient.getLock(PudgeUtil.buildKey(lockKeyPrefix, key, REDIS_LOCK_SUFFIX)))
+                .map(key -> redissonClient.getLock(buildKey(lockKeyPrefix, key, REDIS_LOCK_SUFFIX)))
                 .toArray(RLock[]::new)
         );
         boolean hadLock = false;
@@ -735,7 +746,7 @@ public class CustomRedisCacheService {
      */
     public <R> R mulLockProcess(String lockKeyPrefix, Collection<String> lockKeys, Func0<R> haveLockFun, VoidFunc0 doNotHaveLockFun) {
         RedissonMultiLock lock = new RedissonMultiLock(lockKeys.stream()
-                .map(key -> redissonClient.getLock(PudgeUtil.buildKey(lockKeyPrefix, key, REDIS_LOCK_SUFFIX)))
+                .map(key -> redissonClient.getLock(buildKey(lockKeyPrefix, key, REDIS_LOCK_SUFFIX)))
                 .toArray(RLock[]::new)
         );
         boolean hadLock = false;
@@ -796,7 +807,7 @@ public class CustomRedisCacheService {
      * @return 结果
      */
     public byte[] serializeKey(String name, String key) {
-        return keySerializer.serialize(PudgeUtil.buildKey(name, key));
+        return keySerializer.serialize(buildKey(name, key));
     }
 
     /**
@@ -871,7 +882,7 @@ public class CustomRedisCacheService {
      * @return 号码
      */
     public String incSn(String prefix, int len, Duration duration) {
-        String redisKey = PudgeUtil.buildKey(AUTO_INC_SN, prefix);
+        String redisKey = buildKey(AUTO_INC_SN, prefix);
         Long increment = executeLua(INCREMENT_AND_TTL_LUA, Long.class, CollUtil.newArrayList(redisKey), duration.toMillis() / 1000, 1);
         return StrBuilder.create(prefix, StrUtil.fillBefore(String.valueOf(increment), '0', len)).toString();
     }
@@ -885,7 +896,7 @@ public class CustomRedisCacheService {
      * @return 前值
      */
     public Long increment(String name, String key, long step) {
-        return redisTemplate.opsForValue().increment(PudgeUtil.buildKey(name, key), step);
+        return redisTemplate.opsForValue().increment(buildKey(name, key), step);
     }
 
     /**
@@ -898,7 +909,7 @@ public class CustomRedisCacheService {
      * @return 当前值
      */
     public Long incrementAndTtl(String name, String key, Integer ttlSeconds, Integer step) {
-        String redisKey = PudgeUtil.buildKey(name, key);
+        String redisKey = buildKey(name, key);
         List<String> keys = CollUtil.newArrayList(redisKey);
         return executeLua(INCREMENT_AND_TTL_LUA, Long.class, keys, ttlSeconds, step);
     }
